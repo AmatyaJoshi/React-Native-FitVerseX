@@ -1,18 +1,29 @@
 {
-  "scheme": "acme",
-  "userInterfaceStyle": "automatic",
-  "orientation": "default",
-  "web": {
-    "output": "static"
-  },
-  "plugins": [
-    [
-      "expo-router",
-      {
-        "origin": "https://n"
-      }
-    ]
-  ],
-  "name": "react-native-fitness-app",
-  "slug": "react-native-fitness-app"
+  "expo": {
+    "scheme": "acme",
+    "userInterfaceStyle": "automatic",
+    "orientation": "default",
+    "web": {
+      "output": "static"
+    },
+    "plugins": [
+      [
+        "expo-router",
+        {
+          "origin": "https://n"
+        }
+      ],
+      "expo-font",
+      "expo-secure-store",
+      "expo-web-browser"
+    ],
+    "name": "react-native-fitness-app",
+    "slug": "react-native-fitness-app",
+    "android": {
+      "package": "com.acme.fitapp"
+    },
+    "ios": {
+      "bundleIdentifier": "com.acme.fitapp"
+    }
+  }
 }
