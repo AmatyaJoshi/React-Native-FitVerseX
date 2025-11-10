@@ -1,4 +1,4 @@
-import { View, Image, StatusBar, TouchableOpacity, ScrollView, Text } from 'react-native'
+import { View, Image, StatusBar, TouchableOpacity, ScrollView, Text, Linking, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams, useRouter } from 'expo-router'
@@ -55,6 +55,35 @@ export default function ExerciseDetail() {
         fetchExercise();
     }, [id]);
 
+    const getAiGuidance = async () => {};
+
+    if (loading) {
+        return (
+            <SafeAreaView className='flex-1 bg-white'>
+                <View className='flex-1 items-center justify-center'>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                    <Text className='text-gray-500'>Loading exercise...</Text>
+                </View>
+            </SafeAreaView>
+        );
+    }
+
+    if (!exercise) {
+        return (
+            <SafeAreaView className='flex-1 bg-white'>
+                <View className='flex-1 items-center justify-center'>
+                    <Text className='text-gray-500'>Exercise not found: {id}</Text>
+                    <TouchableOpacity
+                        onPress={() => router.back()}
+                        className='mt-4 bg-blue-500 px-6 py-3 rounded-lg'
+                    >
+                        <Text className='text-white font-semibold'>Go Back</Text>
+                    </TouchableOpacity>
+                </View>
+            </SafeAreaView>
+        );
+    }
+
     return (
         <SafeAreaView className='flex-1 bg-white'>
             <StatusBar barStyle='light-content' backgroundColor='#000' />
@@ -102,15 +131,89 @@ export default function ExerciseDetail() {
                             <Text className='text-3xl font-bold text-gray-800 mb-2'>
                                 {exercise?.name}
                             </Text>
-                            <View 
-                            className={`self-start px-4 py-2 rounded-full
+                            <View
+                                className={`self-start px-4 py-2 rounded-full
                             ${getDifficultyColor(exercise?.difficulty)}`}
                             >
                                 <Text className='text-sm font-semibold text-white'>
-                                    {getDifficultyText(exercise?.difficulty)}
+                                    {getDifficultyText(exercise.difficulty)}
                                 </Text>
                             </View>
                         </View>
+                    </View>
+
+                    {/* Description */}
+                    <View className='mb-6'>
+                        <Text className='text-xl font-semibold text-gray-800 mb-3'>
+                            Description
+                        </Text>
+                        <Text className='text-gray-600 text-base leading-6'>
+                            {exercise.description || 'No description available for this exercise.'}
+                        </Text>
+                    </View>
+
+                    {/* Video Section */}
+                    {exercise?.videoUrl && (
+                        <View className='mb-6'>
+                            <Text className='text-xl font-semibold text-gray-800 mb-3'>
+                                Video Tutorial
+                            </Text>
+                            <TouchableOpacity
+                                className='bg-red-500 rounded-xl p-4 flex-row items-center'
+                                onPress={() => Linking.openURL(exercise.videoUrl)}
+                            >
+                                <View className='w-12 h-12 bg-white rounded-full items-center 
+                                justify-center mr-4'>
+                                    <Ionicons name='play' size={20} color='#EF4444' />
+                                </View>
+                                <View>
+                                    <Text className='text-white font-semibold text-lg'>
+                                        Watch Tutorial
+                                    </Text>
+                                    <Text className='text-red-100 text-sm'>
+                                        Learn proper form
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+
+                    {/* AI Guidance */}
+
+                    {/* Action Buttons */}
+                    <View className='mt-8 gap-2'>
+                        {/* AI Coach Button */}
+                        <TouchableOpacity
+                            className={`rounded-xl py-4 items-center ${aiLoading
+                                ? 'bg-gray-400'
+                                : aiGuidance
+                                    ? 'bg-green-500'
+                                    : 'bg-blue-500'
+                                }`}
+                            onPress={getAiGuidance}
+                            disabled={aiLoading}
+                        >
+                            {aiLoading ? (
+                                <View className='flex-row items-center'>
+                                    <ActivityIndicator size="small" color="white" />
+                                    <Text className='text-white font-bold text-lg ml-2'>
+                                        Loading...
+                                    </Text>
+                                </View>
+                            ) : (
+                                <Text className='text-white font-bold text-lg'>
+                                    {aiGuidance
+                                        ? 'Regenerate AI Guidance'
+                                        : 'Get AI Guidance on Form & Technique'}
+                                </Text>
+                            )}
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            className='bg-gray-200 rounded-xl py-4 items-center'
+                            onPress={() => router.back()}
+                        >
+                            <Text className='text-gray-800 font-bold text-lg'>Close</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </ScrollView>
