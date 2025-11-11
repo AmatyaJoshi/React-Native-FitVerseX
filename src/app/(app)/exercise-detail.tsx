@@ -2,10 +2,11 @@ import { View, Image, StatusBar, TouchableOpacity, ScrollView, Text, Linking, Ac
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { Ionicons } from '@expo/vector-icons';
-import { Exercise } from '@/lib/sanity/types';
-import { client, urlFor } from '@/lib/sanity/client';
-import { defineQuery } from 'groq';
+import { Ionicons } from '@expo/vector-icons'
+import { Exercise } from '@/lib/sanity/types'
+import { client, urlFor } from '@/lib/sanity/client'
+import { defineQuery } from 'groq'
+import Markdown from 'react-native-markdown-display'
 
 export const singleExerciseQuery = defineQuery(`*[_type == "exercise" && _id == $id][0]`);
 
@@ -55,7 +56,46 @@ export default function ExerciseDetail() {
         fetchExercise();
     }, [id]);
 
-    const getAiGuidance = async () => {};
+    const getAiGuidance = async () => {
+        if (!exercise) return;
+        setAiLoading(true);
+
+        try {
+            const prompt = `Provide detailed guidance on how to perform the "${exercise.name}" exercise correctly. Include:
+1. Proper form and technique
+2. Common mistakes to avoid
+3. Tips for maximizing effectiveness
+4. Breathing tips
+Keep it concise but informative.`;
+
+            const response = await fetch("/api/ai", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    prompt,
+                    exerciseData: {
+                        name: exercise.name,
+                        difficulty: exercise.difficulty,
+                        description: exercise.description,
+                    },
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch AI guidance");
+            }
+
+            const data = await response.json();
+            setAiGuidance(data.guidance);
+        } catch (error) {
+            console.error("Error fetching AI guidance:", error);
+            setAiGuidance("Sorry, there was an error getting AI guidance. Please try again.");
+        } finally {
+            setAiLoading(false);
+        }
+    };
 
     if (loading) {
         return (
@@ -179,6 +219,53 @@ export default function ExerciseDetail() {
                     )}
 
                     {/* AI Guidance */}
+                    {(aiGuidance || aiLoading) && (
+                        <View className='mb-6'>
+                            <View className='flex-row items-center mb-3'>
+                                <Ionicons name='fitness' size={24} color='#3B82F6' />
+                                <Text className='text-xl font-semibold text-gray-800 ml-2'>
+                                    AI Coach says...
+                                </Text>
+                            </View>
+
+                            {aiLoading ? (
+                                <View className='bg-gray-50 rounded-xl p-4 items-center'>
+                                    <ActivityIndicator size="small" color="#3B82F6" />
+                                    <Text className='text-gray-600 mt-2'>
+                                        Generating personalized guidance...
+                                    </Text>
+                                </View>
+                            ) : (
+                                <View className='bg-blue-50 rounded-xl p-4 border-l-4 border-blue-500'>
+                                    <Markdown
+                                        style={
+                                            {
+                                                body: {
+                                                    paddingBottom: 20,
+                                                },
+                                                heading2: {
+                                                    fontSize: 18,
+                                                    fontWeight: "bold",
+                                                    color: "#1f2937",
+                                                    marginTop: 12,
+                                                    marginBottom: 6,
+                                                },
+                                                heading3: {
+                                                    fontSize: 16,
+                                                    fontWeight: "600",
+                                                    color: "#374151",
+                                                    marginTop: 8,
+                                                    marginBottom: 4,
+                                                }
+                                            }
+                                        }
+                                    >
+                                        {aiGuidance}
+                                    </Markdown>
+                                </View>
+                            )}
+                        </View>
+                    )}
 
                     {/* Action Buttons */}
                     <View className='mt-8 gap-2'>
