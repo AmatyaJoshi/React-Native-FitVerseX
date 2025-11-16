@@ -187,6 +187,14 @@ export type SanityAssetSourceData = {
 
 export type AllSanitySchemaTypes = Workout | Exercise | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
 export declare const internalGroqTypeReferenceTo: unique symbol;
+// Source: ../src/app/(app)/(tabs)/active-workout.tsx
+// Variable: findExerciseQuery
+// Query: *[_type == "exercise" && name == $name][0]{_id, name}
+export type FindExerciseQueryResult = {
+  _id: string;
+  name: string | null;
+} | null;
+
 // Source: ../src/app/(app)/(tabs)/exercises.tsx
 // Variable: exercisesQuery
 // Query: *[_type == "exercise"]{...}
@@ -267,6 +275,60 @@ export type GetWorkoutRecordQueryResult = {
   }> | null;
 } | null;
 
+// Source: ../src/app/(app)/(tabs)/index.tsx
+// Variable: getTodayWorkoutsQuery
+// Query: *[_type == "workout" && userId == $userId && dateTime(date) >= dateTime(now()) - 86400] {    _id,    date,    duration,    exercises[]{      exercise->{        _id,        name,      },      sets[]{        reps,        weight,        weightUnit,        _type,        _key      },      _type,      _key    }  }
+export type GetTodayWorkoutsQueryResult = Array<never>;
+// Variable: getWeekWorkoutsQuery
+// Query: *[_type == "workout" && userId == $userId && dateTime(date) >= dateTime(now()) - 604800] | order(date desc) {    _id,    date,    duration,    exercises[]{      exercise->{        _id,        name,      },      sets[]{        reps,        weight,        weightUnit,        _type,        _key      },      _type,      _key    }  }
+export type GetWeekWorkoutsQueryResult = Array<never>;
+// Variable: getAllWorkoutsQuery
+// Query: *[_type == "workout" && userId == $userId] | order(date desc) {    _id,    date,    duration,    exercises[]{      exercise->{        _id,        name,      },      sets[]{        reps,        weight,        weightUnit,        _type,        _key      },      _type,      _key    }  }
+export type GetAllWorkoutsQueryResult = Array<{
+  _id: string;
+  date: string | null;
+  duration: number | null;
+  exercises: Array<{
+    exercise: {
+      _id: string;
+      name: string | null;
+    } | null;
+    sets: Array<{
+      reps: number | null;
+      weight: number | null;
+      weightUnit: "kg" | "lbs" | null;
+      _type: "set";
+      _key: string;
+    }> | null;
+    _type: "workoutExercise";
+    _key: string;
+  }> | null;
+}>;
+
+// Source: ../src/app/(app)/(tabs)/profile/index.tsx
+// Variable: getProfileWorkoutsQuery
+// Query: *[_type == "workout" && userId == $userId] | order(date desc){  _id,  date,  duration,  exercises[]{    exercise->{      _id,      name,    },    sets[]{      reps,      weight,      weightUnit,      _type,      _key    },    _type,    _key  }}
+export type GetProfileWorkoutsQueryResult = Array<{
+  _id: string;
+  date: string | null;
+  duration: number | null;
+  exercises: Array<{
+    exercise: {
+      _id: string;
+      name: string | null;
+    } | null;
+    sets: Array<{
+      reps: number | null;
+      weight: number | null;
+      weightUnit: "kg" | "lbs" | null;
+      _type: "set";
+      _key: string;
+    }> | null;
+    _type: "workoutExercise";
+    _key: string;
+  }> | null;
+}>;
+
 // Source: ../src/app/(app)/exercise-detail.tsx
 // Variable: singleExerciseQuery
 // Query: *[_type == "exercise" && _id == $id][0]
@@ -300,9 +362,13 @@ export type SingleExerciseQueryResult = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
+    "*[_type == \"exercise\" && name == $name][0]{_id, name}": FindExerciseQueryResult;
     "*[_type == \"exercise\"]{...}": ExercisesQueryResult;
-    "*[_type == \"workout\" && userId == $userId] | order(date desc){\n  _id,\n  date,\n  duration,\n  exercises[]{\n    exercise->{\n      _id,\n      name,\n    },\n    sets[]{\n      reps,\n      weight,\n      weightUnit,\n      _type,\n      _key\n    },\n    _type,\n    _key\n  }\n}": GetWorkoutsQueryResult;
+    "*[_type == \"workout\" && userId == $userId] | order(date desc){\n  _id,\n  date,\n  duration,\n  exercises[]{\n    exercise->{\n      _id,\n      name,\n    },\n    sets[]{\n      reps,\n      weight,\n      weightUnit,\n      _type,\n      _key\n    },\n    _type,\n    _key\n  }\n}": GetWorkoutsQueryResult | GetProfileWorkoutsQueryResult;
     "*[_type == \"workout\" && _id == $workoutId][0] {\n  _id,\n  _type,\n  _createdAt,\n  date,\n  duration,\n  exercises[]{\n    exercise->{\n      _id,\n      name,\n      description\n    },\n    sets[]{\n      reps,\n      weight,\n      weightUnit,\n      _type,\n      _key\n    },\n    _type,\n    _key\n  }\n}": GetWorkoutRecordQueryResult;
+    "*[_type == \"workout\" && userId == $userId && dateTime(date) >= dateTime(now()) - 86400] {\n    _id,\n    date,\n    duration,\n    exercises[]{\n      exercise->{\n        _id,\n        name,\n      },\n      sets[]{\n        reps,\n        weight,\n        weightUnit,\n        _type,\n        _key\n      },\n      _type,\n      _key\n    }\n  }": GetTodayWorkoutsQueryResult;
+    "*[_type == \"workout\" && userId == $userId && dateTime(date) >= dateTime(now()) - 604800] | order(date desc) {\n    _id,\n    date,\n    duration,\n    exercises[]{\n      exercise->{\n        _id,\n        name,\n      },\n      sets[]{\n        reps,\n        weight,\n        weightUnit,\n        _type,\n        _key\n      },\n      _type,\n      _key\n    }\n  }": GetWeekWorkoutsQueryResult;
+    "*[_type == \"workout\" && userId == $userId] | order(date desc) {\n    _id,\n    date,\n    duration,\n    exercises[]{\n      exercise->{\n        _id,\n        name,\n      },\n      sets[]{\n        reps,\n        weight,\n        weightUnit,\n        _type,\n        _key\n      },\n      _type,\n      _key\n    }\n  }": GetAllWorkoutsQueryResult;
     "*[_type == \"exercise\" && _id == $id][0]": SingleExerciseQueryResult;
   }
 }

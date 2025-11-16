@@ -7,6 +7,7 @@ import { GetWorkoutRecordQueryResult } from '@/lib/sanity/types';
 import { formatDuration } from 'lib/utils';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/lib/contexts/ThemeContext';
 
 const getWorkoutRecordQuery =
     defineQuery(`*[_type == "workout" && _id == $workoutId][0] {
@@ -39,6 +40,7 @@ export default function WorkoutRecord() {
     const [deleting, setDeleting] = useState(false);
     const [workout, setWorkout] = useState<GetWorkoutRecordQueryResult | null>(null);
     const router = useRouter();
+    const { theme } = useTheme();
 
     useEffect(() => {
         const fetchWorkout = async () => {
@@ -146,10 +148,10 @@ export default function WorkoutRecord() {
 
     if (loading) {
         return (
-            <SafeAreaView className='flex-1 bg-gray-50'>
+            <SafeAreaView className={`flex-1 ${theme === 'dark' ? 'bg-black' : 'bg-gray-50'}`} edges={['top', 'left', 'right']}>
                 <View className='flex-1 items-center justify-center'>
                     <ActivityIndicator size="large" color="#3B82F6" />
-                    <Text className='text-gray-600 mt-4'>Loading workout...</Text>
+                    <Text className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mt-4`}>Loading workout...</Text>
                 </View>
             </SafeAreaView>
         )
@@ -157,13 +159,13 @@ export default function WorkoutRecord() {
 
     if (!workout) {
         return (
-            <SafeAreaView className='flex-1 bg-gray-50'>
+            <SafeAreaView className={`flex-1 ${theme === 'dark' ? 'bg-black' : 'bg-gray-50'}`} edges={['top', 'left', 'right']}>
                 <View className='flex-1 items-center justify-center'>
                     <Ionicons name='alert-circle-outline' size={64} color='#EF4444' />
-                    <Text className='text-xl font-semibold text-gray-900 mt-4'>
+                    <Text className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-4`}>
                         Workout Not Found
                     </Text>
-                    <Text className='text-gray-600 mt-2 text-center'>
+                    <Text className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mt-2 text-center`}>
                         This workout record could not be found.
                     </Text>
                     <TouchableOpacity
@@ -180,12 +182,12 @@ export default function WorkoutRecord() {
     const { volume, unit } = getTotalVolume();
 
     return (
-        <View className='flex-1 bg-gray-50'>
+        <View className={`flex-1 ${theme === 'dark' ? 'bg-black' : 'bg-gray-50'}`}>
             <ScrollView className='flex-1'>
                 {/* Workout Summary */}
-                <View className='bg-white p-6 border-b border-gray-300'>
+                <View className={`${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-300'} p-6 border-b`}>
                     <View className='flex-row items-center justify-between mb-4'>
-                        <Text className='text-lg font-semibold text-gray-900'>
+                        <Text className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                             Workout Summary
                         </Text>
                         <TouchableOpacity
@@ -205,36 +207,36 @@ export default function WorkoutRecord() {
                     </View>
 
                     <View className='flex-row items-center mb-3'>
-                        <Ionicons name='calendar-outline' size={20} color='#6B7280' />
-                        <Text className='text-gray-700 ml-3 font-medium'>
+                        <Ionicons name='calendar-outline' size={20} color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} />
+                        <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} ml-3 font-medium`}>
                             {formatDate(workout.date)} at {formatTime(workout.date)}
                         </Text>
                     </View>
 
                     <View className='flex-row items-center mb-3'>
-                        <Ionicons name='time-outline' size={20} color='#6B7280' />
-                        <Text className='text-gray-700 ml-3 font-medium'>
+                        <Ionicons name='time-outline' size={20} color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} />
+                        <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} ml-3 font-medium`}>
                             {formatWorkoutDuration(workout.duration)}
                         </Text>
                     </View>
 
                     <View className='flex-row items-center mb-3'>
-                        <Ionicons name='fitness-outline' size={20} color='#6B7280' />
-                        <Text className='text-gray-700 ml-3 font-medium'>
+                        <Ionicons name='fitness-outline' size={20} color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} />
+                        <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} ml-3 font-medium`}>
                             {workout.exercises?.length || 0} exercises
                         </Text>
                     </View>
 
                     <View className='flex-row items-center mb-3'>
-                        <Ionicons name='bar-chart-outline' size={20} color='#6B7280' />
-                        <Text className='text-gray-700 ml-3 font-medium'>
+                        <Ionicons name='bar-chart-outline' size={20} color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} />
+                        <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} ml-3 font-medium`}>
                             {getTotalSets()} sets
                         </Text>
                     </View>
 
                     <View className='flex-row items-center'>
-                        <Ionicons name='barbell-outline' size={20} color='#6B7280' />
-                        <Text className='text-gray-700 ml-3 font-medium'>
+                        <Ionicons name='barbell-outline' size={20} color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} />
+                        <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} ml-3 font-medium`}>
                             {volume.toLocaleString()} {unit} total volume
                         </Text>
                     </View>
@@ -245,19 +247,19 @@ export default function WorkoutRecord() {
                     {workout.exercises?.map((exerciseData, index) => (
                         <View
                             key={exerciseData._key}
-                            className='bg-white rounded-2xl p-6 shadow-sm border border-gray-100'>
+                            className={`${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-300'} rounded-2xl p-6 shadow-sm border`}>
                             {/* Exercise Header */}
                             <View className='flex-row items-center justify-between mb-4'>
                                 <View className='flex-1'>
-                                    <Text className='text-lg font-bold text-gray-900'>
+                                    <Text className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                                         {exerciseData.exercise?.name || "Unknown Exercise"}
                                     </Text>
-                                    <Text className='text-gray-600 text-sm mt-1'>
+                                    <Text className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-sm mt-1`}>
                                         {exerciseData.sets?.length || 0} sets completed
                                     </Text>
                                 </View>
-                                <View className='bg-blue-100 rounded-full w-10 h-10 items-center justify-center'>
-                                    <Text className='text-blue-600 font-bold'>
+                                <View className={`${theme === 'dark' ? 'bg-black' : 'bg-blue-100'} rounded-full w-10 h-10 items-center justify-center`}>
+                                    <Text className={`${theme === 'dark' ? 'text-gray-200' : 'text-blue-600'} font-bold`}>
                                         {index + 1}
                                     </Text>
                                 </View>
@@ -265,29 +267,29 @@ export default function WorkoutRecord() {
 
                             {/* Sets List */}
                             <View className='space-y-2'>
-                                <Text className='text-sm font-medium text-gray-700 mb-2'>
+                                <Text className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-700'} mb-2`}>
                                     Sets:
                                 </Text>
                                 {exerciseData.sets?.map((set, setIndex) => (
                                     <View
                                         key={set._key}
-                                        className='bg-gray-50 rounded-lg p-3 flex-row items-center justify-between'
+                                        className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'} rounded-lg p-3 flex-row items-center justify-between`}
                                     >
                                         <View className='flex-row items-center'>
-                                            <View className='bg-gray-200 rounded-full w-6 h-6 items-center justify-center mr-3'>
-                                                <Text className='text-gray-700 font-medium text-xs'>
+                                            <View className={`${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'} rounded-full w-6 h-6 items-center justify-center mr-3`}>
+                                                <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} font-medium text-xs`}>
                                                     {setIndex + 1}
                                                 </Text>
                                             </View>
-                                            <Text className='text-gray-900 font-medium'>
+                                            <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-900'} font-medium`}>
                                                 {set.reps} reps
                                             </Text>
                                         </View>
 
                                         {set.weight && (
                                             <View className='flex-row items-center'>
-                                                <Ionicons name='barbell-outline' size={16} color='#6B7280' />
-                                                <Text className='text-gray-700 font-medium ml-2'>
+                                                <Ionicons name='barbell-outline' size={16} color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} />
+                                                <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} font-medium ml-2`}>
                                                     {set.weight} {set.weightUnit || 'lbs'}
                                                 </Text>
                                             </View>
@@ -299,12 +301,12 @@ export default function WorkoutRecord() {
 
                             {/* Exercise Volume Summary */}
                             {exerciseData.sets && exerciseData.sets.length > 0 && (
-                                <View className='mt-4 pt-4 border-t border-gray-100'>
+                                <View className={`mt-4 pt-4 border-t ${theme === 'dark' ? 'border-gray-800' : 'border-gray-100'}`}>
                                     <View className='flex-row items-center justify-between'>
-                                        <Text className='text-sm text-gray-600'>
+                                        <Text className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                                             Exercise Volume:
                                         </Text>
-                                        <Text className='text-sm font-medium text-gray-900'>
+                                        <Text className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-900'}`}>
                                             {exerciseData.sets
                                                 .reduce((total, set) => {
                                                     return total + ((set.weight || 0) * (set.reps || 0));

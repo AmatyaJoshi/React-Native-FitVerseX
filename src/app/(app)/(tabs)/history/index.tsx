@@ -6,8 +6,9 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { defineQuery } from "groq";
 import { formatDuration } from "lib/utils";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, RefreshControl, ScrollView, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "@/lib/contexts/ThemeContext";
 
 export const getWorkoutsQuery =
   defineQuery(`*[_type == "workout" && userId == $userId] | order(date desc){
@@ -38,6 +39,7 @@ export default function HistoryPage() {
   const [refreshing, setRefreshing] = useState(false);
   const { refresh } = useLocalSearchParams();
   const router = useRouter();
+  const { theme } = useTheme();
 
   const fetchWorkouts = async () => {
     if (!user?.id) return;
@@ -111,28 +113,29 @@ export default function HistoryPage() {
 
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 bg-gray-50">
-        <View className="px-6 py-4 bg-white border-b border-gray-200">
-          <Text className="text-2xl font-bold text-gray-900">
+      <SafeAreaView className={`flex-1 ${theme === 'dark' ? 'bg-black' : 'bg-gray-50'}`} edges={['top', 'left', 'right']}>
+        <View className={`px-6 py-4 ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'} border-b`}>
+          <Text className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
             Workout History
           </Text>
         </View>
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#3B82F6" />
-          <Text className="text-gray-600 mt-4">Loading your workouts...</Text>
+          <Text className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mt-4`}>Loading your workouts...</Text>
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView className="flex flex-1 bg-gray-50">
+    <SafeAreaView className={`flex flex-1 ${theme === 'dark' ? 'bg-black' : 'bg-white'}`} edges={['top', 'left', 'right']}>
+      <StatusBar barStyle={theme === 'dark' ? 'light-content' : 'dark-content'} />
       {/* Header */}
-      <View className="px-6 py-4 bg-white border-b border-gray-200">
-        <Text className="text-2xl font-bold text-gray-900">
+      <View className={`px-6 py-4 ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'} border-b`}>
+        <Text className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
           Workout History
         </Text>
-        <Text className="text-gray-600 mt-1">
+        <Text className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
           {workouts.length} workout{workouts.length !== 1 ? 's' : ''} completed
         </Text>
       </View>
@@ -146,12 +149,12 @@ export default function HistoryPage() {
         }
       >
         {workouts.length === 0 ? (
-          <View className="bg-white rounded-2xl p-8 items-center">
-            <Ionicons name="barbell-outline" size={64} color="#9CA3AF" />
-            <Text className="text-xl font-semibold text-gray-900 mt-4">
+          <View className={`${theme === 'dark' ? 'bg-gray-900' : 'bg-white'} rounded-2xl p-8 items-center`}>
+            <Ionicons name="barbell-outline" size={64} color={theme === 'dark' ? '#6B7280' : '#9CA3AF'} />
+            <Text className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-4`}>
               No workouts yet
             </Text>
-            <Text className="text-gray-600 mt-2 text-center">
+            <Text className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mt-2 text-center`}>
               Your completed workouts will appear here
             </Text>
           </View>
@@ -160,7 +163,7 @@ export default function HistoryPage() {
             {workouts.map((workout) => (
               <TouchableOpacity
                 key={workout._id}
-                className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+                className={`${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-300'} rounded-2xl p-6 shadow-sm border`}
                 activeOpacity={0.7}
                 onPress={() => {
                   router.push({
@@ -174,17 +177,17 @@ export default function HistoryPage() {
                 {/* Workout Header */}
                 <View className="flex-row items-center justify-between mb-4">
                   <View className="flex-1">
-                    <Text className="text-lg font-semibold text-gray-900">
+                    <Text className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                       {formatDate(workout.date || "")}
                     </Text>
                     <View className="flex-row items-center mt-1">
-                      <Ionicons name="time-outline" size={16} color="#6B7280" />
-                      <Text className="text-gray-600 ml-2">
+                      <Ionicons name="time-outline" size={16} color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} />
+                      <Text className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} ml-2`}>
                         {formatWorkoutDuration(workout.duration)}
                       </Text>
                     </View>
                   </View>
-                  <View className="bg-blue-100 rounded-full w-12 h-12 items-center justify-center">
+                  <View className={`${theme === 'dark' ? 'bg-black' : 'bg-blue-100'} rounded-full w-12 h-12 items-center justify-center`}>
                     <Ionicons
                       name="fitness-outline"
                       size={24}
@@ -195,13 +198,13 @@ export default function HistoryPage() {
                 {/* Workout Stats */}
                 <View className="flex-row items-center justify-between mb-4">
                   <View className="flex-row items-center">
-                    <View className="bg-gray-100 rounded-lg px-3 py-2 mr-3">
-                      <Text className="text-gray-700 font-medium text-sm">
+                    <View className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg px-3 py-2 mr-3`}>
+                      <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} font-medium text-sm`}>
                         {workout.exercises?.length || 0} exercises
                       </Text>
                     </View>
-                    <View className="bg-gray-100 rounded-lg px-3 py-2">
-                      <Text className="text-gray-700 font-medium text-sm">
+                    <View className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg px-3 py-2`}>
+                      <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} font-medium text-sm`}>
                         {getTotalSets(workout)} sets
                       </Text>
                     </View>
@@ -211,7 +214,7 @@ export default function HistoryPage() {
                 {/* Exercise List */}
                 {workout.exercises && workout.exercises.length > 0 && (
                   <View>
-                    <Text className="text-sm font-medium text-gray-700 mb-2">
+                    <Text className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-700'} mb-2`}>
                       Exercises:
                     </Text>
                     <View className="flex-row flex-wrap">
@@ -220,9 +223,9 @@ export default function HistoryPage() {
                         .map((name, index) => (
                           <View
                             key={index}
-                            className="bg-blue-50 rounded-lg px-3 py-1 mr-2 mb-2"
+                            className={`${theme === 'dark' ? 'bg-black' : 'bg-blue-50'} rounded-lg px-3 py-1 mr-2 mb-2`}
                           >
-                            <Text className="text-blue-700 text-sm font-medium">
+                            <Text className={`${theme === 'dark' ? 'text-gray-200' : 'text-blue-700'} text-sm font-medium`}>
                               {name}
                             </Text>
                           </View>

@@ -2,10 +2,25 @@ import { Tabs } from "expo-router";
 import React from "react";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { Image } from "react-native";
+import { useUser } from "@clerk/clerk-expo";
+import { useTheme } from "@/lib/contexts/ThemeContext";
 
 function Layout() {
+    const { user } = useUser();
+    const { theme } = useTheme();
+
     return (
-        <Tabs>
+        <Tabs
+            screenOptions={{
+                tabBarStyle: {
+                    backgroundColor: theme === 'dark' ? '#000000' : '#ffffff',
+                    borderTopColor: theme === 'dark' ? '#1f2937' : '#e5e7eb',
+                    borderTopWidth: 1,
+                },
+                tabBarActiveTintColor: '#3b82f6',
+                tabBarInactiveTintColor: theme === 'dark' ? '#9ca3af' : '#6b7280',
+            }}
+        >
             <Tabs.Screen
                 name="index"
                 options={{
@@ -67,13 +82,14 @@ function Layout() {
                 options={{
                     headerShown: false,
                     title: "Profile",
-                    // tabBarIcon: ({ color, size }) => (
-                    //     <Image 
-                    //     source={user?.imageUrl ?? user?.externalAccounts[0]?.imageUrl}
-                    //     className="rounded-full"
-                    //     style={{ width: 28, height: 28, borderRadius: 100 }}
-                    //     />
-                    // )
+                    tabBarIcon: ({ color, size }) => (
+                        <Image 
+                        source={{
+                            uri: user?.imageUrl ?? user?.externalAccounts[0]?.imageUrl,
+                        }}
+                        className="rounded-full w-7 h-7"
+                        />
+                    )
                 }}
             />
         </Tabs>

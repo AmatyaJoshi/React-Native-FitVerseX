@@ -3,6 +3,7 @@ import { Exercise } from '@/lib/sanity/types'
 import React from 'react'
 import { urlFor } from '@/lib/sanity/client';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/lib/contexts/ThemeContext';
 
 const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -33,12 +34,14 @@ export default function ExerciseCard({
     onPress,
     showChevron = false,
 }: ExerciseCardProps) {
+    const { theme } = useTheme();
+
     return (
         <TouchableOpacity
             onPress={onPress}
-            className="bg-white rounded-2xl mb-4 shadow-sm border border-gray-100">
+            className={`${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-300'} rounded-2xl mb-4 shadow-sm border`}>
             <View className="flex-row p-6">
-                <View className='w-20 h-20 bg-white rounded-xl mr-4 overflow-hidden'>
+                <View className={`w-20 h-20 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-xl mr-4 overflow-hidden`}>
                     {item.image ? (
                         <Image
                             source={{ uri: urlFor(item.image?.asset?._ref).url()}}
@@ -55,10 +58,10 @@ export default function ExerciseCard({
 
                 <View className='flex-1 justify-between'>
                     <View>
-                        <Text className='text-lg font-bold text-gray-900 mb-1'>
+                        <Text className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-1`}>
                             {item.name}
                         </Text>
-                        <Text className='text-sm text-gray-600 mb-2' numberOfLines={2}>
+                        <Text className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mb-2`} numberOfLines={2}>
                             {item.description || "No description available."}
                         </Text>
                     </View>
