@@ -23,6 +23,11 @@ function Layout() {
                     gestureEnabled: true,
                     animationTypeForReplace: 'push',
                     }} />
+                <Stack.Screen name="exercise-selection" options={{ 
+                    headerShown: false,
+                    presentation: 'modal',
+                    gestureEnabled: true,
+                    }} />
                 <Stack.Screen name="profile" options={{ 
                     headerShown: false,
                     presentation: 'modal',

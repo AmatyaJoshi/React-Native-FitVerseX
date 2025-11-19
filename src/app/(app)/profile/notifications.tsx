@@ -19,7 +19,7 @@ export default function NotificationsPage() {
         <StatusBar barStyle={theme === 'dark' ? 'light-content' : 'dark-content'} />
         
         {/* Header */}
-        <View className={`px-6 py-4 flex-row items-center justify-between ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'} border-b`}>
+        <View className={`px-6 py-4 flex-row items-center justify-between ${theme === 'dark' ? 'bg-charcoal border-gray-800' : 'bg-white border-gray-200'} border-b`}>
           <TouchableOpacity onPress={() => router.back()}>
             <Ionicons name="chevron-back" size={28} color={theme === 'dark' ? '#F3F4F6' : '#1F2937'} />
           </TouchableOpacity>
@@ -29,14 +29,14 @@ export default function NotificationsPage() {
 
         {/* Notification Settings */}
         <View className="px-6 pt-6">
-          <View className={`${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-300'} rounded-2xl shadow-sm border overflow-hidden mb-6`}>
-            <Text className={`px-6 pt-6 pb-4 text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Push Notifications</Text>
+          <View className={`${theme === 'dark' ? 'bg-charcoal border-gray-800' : 'bg-white border-gray-300'} rounded-2xl shadow-sm border overflow-hidden mb-6`}>
+            <Text className={`px-6 pt-6 pb-4 text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`} style={{ letterSpacing: -1.2 }}>Push Notifications</Text>
             
             {/* Workout Reminders */}
             <View className={`px-6 py-4 border-b ${theme === 'dark' ? 'border-gray-800' : 'border-gray-100'} flex-row items-center justify-between`}>
               <View className="flex-1">
                 <Text className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Workout Reminders</Text>
-                <Text className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mt-1`}>Get reminded to exercise</Text>
+                <Text className={`text-base font-black ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} mt-1`} style={{ letterSpacing: -0.3 }}>Get reminded to exercise</Text>
               </View>
               <Switch
                 value={workoutReminders}
@@ -50,7 +50,7 @@ export default function NotificationsPage() {
             <View className={`px-6 py-4 border-b ${theme === 'dark' ? 'border-gray-800' : 'border-gray-100'} flex-row items-center justify-between`}>
               <View className="flex-1">
                 <Text className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Achievement Alerts</Text>
-                <Text className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mt-1`}>Celebrate your milestones</Text>
+                <Text className={`text-base font-black ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} mt-1`} style={{ letterSpacing: -0.3 }}>Celebrate your milestones</Text>
               </View>
               <Switch
                 value={achievementAlerts}
@@ -64,7 +64,7 @@ export default function NotificationsPage() {
             <View className={`px-6 py-4 flex-row items-center justify-between`}>
               <View className="flex-1">
                 <Text className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>All Push Notifications</Text>
-                <Text className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mt-1`}>Enable all push alerts</Text>
+                <Text className={`text-base font-black ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} mt-1`} style={{ letterSpacing: -0.3 }}>Enable all push alerts</Text>
               </View>
               <Switch
                 value={pushNotifications}
@@ -76,13 +76,13 @@ export default function NotificationsPage() {
           </View>
 
           {/* Email Notifications */}
-          <View className={`${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-300'} rounded-2xl shadow-sm border overflow-hidden mb-6`}>
-            <Text className={`px-6 pt-6 pb-4 text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Email Notifications</Text>
+          <View className={`${theme === 'dark' ? 'bg-charcoal border-gray-800' : 'bg-white border-gray-300'} rounded-2xl shadow-sm border overflow-hidden mb-6`}>
+            <Text className={`px-6 pt-6 pb-4 text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`} style={{ letterSpacing: -1.2 }}>Email Notifications</Text>
             
             <View className={`px-6 py-4 flex-row items-center justify-between`}>
               <View className="flex-1">
                 <Text className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Email Updates</Text>
-                <Text className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mt-1`}>Receive updates via email</Text>
+                <Text className={`text-base font-black ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} mt-1`} style={{ letterSpacing: -0.3 }}>Receive updates via email</Text>
               </View>
               <Switch
                 value={emailNotifications}
@@ -97,7 +97,7 @@ export default function NotificationsPage() {
           <View className={`${theme === 'dark' ? 'bg-blue-900' : 'bg-blue-50'} rounded-2xl p-4 mb-8 flex-row`}>
             <Ionicons name="information-circle-outline" size={20} color="#3B82F6" />
             <View className="flex-1 ml-3">
-              <Text className={`text-sm ${theme === 'dark' ? 'text-blue-200' : 'text-blue-900'}`}>
+              <Text className={`text-base font-black ${theme === 'dark' ? 'text-blue-200' : 'text-blue-900'}`} style={{ letterSpacing: -0.3 }}>
                 Notification settings are saved automatically. You can manage these preferences at any time.
               </Text>
             </View>

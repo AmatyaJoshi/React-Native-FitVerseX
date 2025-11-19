@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, View, Image, StatusBar, ActivityIndicator, TouchableOpacity } from "react-native";
+import { ScrollView, Text, View, Image, StatusBar, ActivityIndicator, TouchableOpacity, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useUser } from "@clerk/clerk-expo";
@@ -38,6 +38,7 @@ export default function HomePage() {
   const { theme, setThemeMode } = useTheme();
   const [workouts, setWorkouts] = useState<GetWorkoutsQueryResult>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchWorkouts = async () => {
     if (!user?.id) return;
@@ -56,10 +57,32 @@ export default function HomePage() {
     fetchWorkouts();
   }, [user?.id]);
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchWorkouts();
+    setRefreshing(false);
+  };
+
   // Calculate stats
   const totalWorkouts = workouts.length;
   const totalDuration = workouts.reduce((sum, workout) => sum + (workout.duration || 0), 0);
   const averageDuration = totalWorkouts > 0 ? Math.round(totalDuration / totalWorkouts) : 0;
+
+  // Format time as MM:SS or HH:MM with units
+  const formatTimeDisplay = (seconds: number) => {
+    if (!seconds || seconds === 0) {
+      return { main: '00m', sub: '00s' };
+    }
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    
+    if (hours > 0) {
+      return { main: String(hours).padStart(2, '0') + 'h', sub: String(minutes).padStart(2, '0') + 'm' };
+    } else {
+      return { main: String(minutes).padStart(2, '0') + 'm', sub: String(secs).padStart(2, '0') + 's' };
+    }
+  };
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -100,7 +123,19 @@ export default function HomePage() {
   const lastWorkout = workouts.length > 0 ? workouts[0] : null;
   return (
     <SafeAreaView className={`flex flex-1 ${theme === 'dark' ? 'bg-black' : 'bg-gray-50'}`} edges={['top', 'left', 'right']}>
-      <ScrollView className="flex-1">
+      <ScrollView 
+        className="flex-1"
+        refreshControl={
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={onRefresh}
+            colors={["#3B82F6"]}
+            tintColor="#3B82F6"
+            title='Pull to refresh'
+            titleColor={theme === 'dark' ? '#D1D5DB' : '#6B7280'}
+          />
+        }
+      >
         <StatusBar barStyle={theme === 'dark' ? 'light-content' : 'dark-content'} />
         {/* Header with Logo and Theme Toggle */}
         <View className="flex-row items-center justify-between px-6 pt-2">
@@ -126,39 +161,53 @@ export default function HomePage() {
 
         {/* Header */}
         <View className="px-6 pt-6 pb-6">
-          <Text className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{getGreeting()}, {firstName}!</Text>
-          <Text className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mt-2`}>Let's crush your fitness goals today</Text>
+          <Text className={`text-5xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-1`} style={{ letterSpacing: -1.5 }}>
+            {getGreeting()}, {firstName}!
+          </Text>
+          <Text className={`text-lg font-black ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} style={{ letterSpacing: -0.5 }}>
+            Let's crush your fitness goals today
+          </Text>
         </View>
 
         {/* Your Stats */}
         <View className="px-6 mb-6">
-          <View className={`${theme === 'dark' ? 'bg-gray-900' : 'bg-white'} rounded-2xl p-6 shadow-sm border ${theme === 'dark' ? 'border-gray-800' : 'border-gray-300'}`}>
-            <Text className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-4`}>
+          <View className={`${theme === 'dark' ? 'bg-charcoal' : 'bg-white'} rounded-2xl p-6 shadow-sm border ${theme === 'dark' ? 'border-gray-800' : 'border-gray-300'}`}>
+            <Text className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-4`} style={{ letterSpacing: -1.2 }}>
               Your Stats
             </Text>
 
             <View className="flex-row justify-between">
               <View className="items-center flex-1">
-                <Text className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                <Text style={{ fontSize: 57, fontWeight: '900', }} className={`${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   {totalWorkouts}
                 </Text>
-                <Text className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-center`}>
+                <Text className={`text-base font-black mt-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} text-center`} style={{ letterSpacing: -0.3 }}>
                   Total{"\n"}Workouts
                 </Text>
               </View>
               <View className="items-center flex-1">
-                <Text className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                  {formatDuration(totalDuration)}
-                </Text>
-                <Text className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-center`}>
+                <View>
+                  <Text style={{ fontSize: 28, fontWeight: '900', letterSpacing: -1, textAlign: 'center' }} className={`${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    {formatTimeDisplay(totalDuration).main}
+                  </Text>
+                  <Text style={{ fontSize: 28, fontWeight: '900', letterSpacing: -1, textAlign: 'center' }} className={`${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    {formatTimeDisplay(totalDuration).sub}
+                  </Text>
+                </View>
+                <Text className={`text-base font-black mt-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} text-center`} style={{ letterSpacing: -0.3 }}>
                   Total{"\n"}Time
                 </Text>
               </View>
               <View className="items-center flex-1">
-                <Text className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                  {totalWorkouts > 0 ? formatDuration(averageDuration) : "-"}
-                </Text>
-                <Text className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-center`}>
+                <View>
+                  <Text style={{ fontSize: 28, fontWeight: '900', letterSpacing: -1, textAlign: 'center' }} className={`${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    {formatTimeDisplay(averageDuration).main}
+                  </Text>
+                  <Text style={{ fontSize: 28, fontWeight: '900', letterSpacing: -1, textAlign: 'center' }} className={`${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    {formatTimeDisplay(averageDuration).sub}
+                  </Text>
+                </View>
+                <Text className={`text-base font-black mt-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} text-center`} style={{ letterSpacing: -0.3 }}>
                   Average{"\n"}Duration
                 </Text>
               </View>
@@ -168,7 +217,7 @@ export default function HomePage() {
 
         {/* Quick Actions */}
         <View className="px-6 mb-6">
-          <Text className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-3`}>Quick Actions</Text>
+          <Text className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-3`} style={{ letterSpacing: -1.2 }}>Quick Actions</Text>
           
           {/* Start Workout - Featured */}
           <TouchableOpacity 
@@ -182,7 +231,7 @@ export default function HomePage() {
                 </View>
                 <View className="flex-1">
                   <Text className="text-white font-semibold text-lg">Start Workout</Text>
-                  <Text className="text-blue-100 text-sm">Begin your training session</Text>
+                  <Text className="text-blue-100 text-sm font-black" style={{ letterSpacing: -0.3 }}>Begin your training session</Text>
                 </View>
               </View>
               <Ionicons name="chevron-forward" size={24} color="white" />
@@ -190,7 +239,7 @@ export default function HomePage() {
           </TouchableOpacity>
 
           {/* Other Actions */}
-          <View className={`${theme === 'dark' ? 'bg-gray-900' : 'bg-white'} rounded-2xl shadow-sm border ${theme === 'dark' ? 'border-gray-800' : 'border-gray-300'} overflow-hidden`}>
+          <View className={`${theme === 'dark' ? 'bg-charcoal' : 'bg-white'} rounded-2xl shadow-sm border ${theme === 'dark' ? 'border-gray-800' : 'border-gray-300'} overflow-hidden`}>
             {/* Browse Exercises */}
             <TouchableOpacity 
               onPress={() => router.push('/(app)/(tabs)/exercises')}
@@ -198,12 +247,12 @@ export default function HomePage() {
             >
               <View className={`px-6 py-4 border-b ${theme === 'dark' ? 'border-gray-800' : 'border-gray-100'} flex-row items-center justify-between`}>
                 <View className="flex-row items-center flex-1">
-                  <View className={`w-12 h-12 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg items-center justify-center mr-4`}>
+                  <View className="mr-4">
                     <Ionicons name="book" size={24} color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} />
                   </View>
                   <View>
                     <Text className={`${theme === 'dark' ? 'text-white' : 'text-gray-900'} font-semibold`}>Browse Exercises</Text>
-                    <Text className={`text-sm ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>Find new movements</Text>
+                    <Text className={`text-sm font-black ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`} style={{ letterSpacing: -0.3 }}>Find new movements</Text>
                   </View>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color={theme === 'dark' ? '#4B5563' : '#D1D5DB'} />
@@ -217,12 +266,12 @@ export default function HomePage() {
             >
               <View className="px-6 py-4 flex-row items-center justify-between">
                 <View className="flex-row items-center flex-1">
-                  <View className={`w-12 h-12 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg items-center justify-center mr-4`}>
+                  <View className="mr-4">
                     <Ionicons name="bar-chart" size={24} color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} />
                   </View>
                   <View>
                     <Text className={`${theme === 'dark' ? 'text-white' : 'text-gray-900'} font-semibold`}>View History</Text>
-                    <Text className={`text-sm ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>Track progress</Text>
+                    <Text className={`text-sm font-black ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`} style={{ letterSpacing: -0.3 }}>Track progress</Text>
                   </View>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color={theme === 'dark' ? '#4B5563' : '#D1D5DB'} />
@@ -233,9 +282,9 @@ export default function HomePage() {
 
         {/* Motivation Card */}
         <View className="px-6 mb-8">
-          <View className={`${theme === 'dark' ? 'bg-gray-100' : 'bg-gray-900'} rounded-2xl p-6 overflow-hidden border ${theme === 'dark' ? 'border-gray-200' : 'border-gray-900'}`}>
-            <Text className={`${theme === 'dark' ? 'text-gray-900' : 'text-white'} text-lg font-bold mb-2`}>Tip of the Day</Text>
-            <Text className={`${theme === 'dark' ? 'text-gray-700' : 'text-gray-300'} text-sm leading-6`}>
+          <View className={`${theme === 'dark' ? 'bg-gray-100' : 'bg-gray-900'} rounded-2xl p-8 overflow-hidden border ${theme === 'dark' ? 'border-gray-200' : 'border-gray-900'}`}>
+            <Text className={`${theme === 'dark' ? 'text-gray-900' : 'text-white'} text-4xl font-black mb-4`} style={{ letterSpacing: -1.2 }}>Tip of the Day</Text>
+            <Text className={`${theme === 'dark' ? 'text-gray-700' : 'text-gray-300'} text-lg leading-8 font-medium`}>
               Consistency beats perfection. Small daily efforts compound into remarkable results over time.
             </Text>
           </View>
@@ -244,17 +293,17 @@ export default function HomePage() {
         {/* Last Workout */}
         {lastWorkout && (
           <View className="px-6 mb-8">
-            <Text className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-3`}>Last Workout</Text>
-            <View className={`${theme === 'dark' ? 'bg-gray-900' : 'bg-white'} rounded-2xl p-6 shadow-sm border ${theme === 'dark' ? 'border-gray-800' : 'border-gray-300'}`}>
-              {/* Workout Header */}
-              <View className="flex-row items-center justify-between mb-4">
+            <Text className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-3`} style={{ letterSpacing: -1.2 }}>Last Workout</Text>
+          <View className={`${theme === 'dark' ? 'bg-charcoal' : 'bg-white'} rounded-2xl p-6 shadow-sm border ${theme === 'dark' ? 'border-gray-800' : 'border-gray-300'}`}>
+            {/* Workout Header */}
+            <View className="flex-row items-center justify-between mb-4">
                 <View className="flex-1">
                   <Text className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                     {formatDate(lastWorkout.date || "")}
                   </Text>
                   <View className="flex-row items-center mt-1">
                     <Ionicons name="time-outline" size={16} color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} />
-                    <Text className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} ml-2`}>
+                    <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} ml-2`}>
                       {formatDuration(lastWorkout.duration || 0)}
                     </Text>
                   </View>

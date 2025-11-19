@@ -1,68 +1,99 @@
-import React from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { StatusBar, Text, TouchableOpacity, View } from 'react-native'
+import { StatusBar, Text, TouchableOpacity, View, ScrollView, Animated } from 'react-native'
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/lib/contexts/ThemeContext';
+import { VideoView, useVideoPlayer } from 'expo-video';
 
 function Workout() {
     const router = useRouter();
     const { theme } = useTheme();
+    const scaleAnim = useRef(new Animated.Value(1)).current;
+    const [isPressed, setIsPressed] = useState(false);
+
+    const player = useVideoPlayer(require('../../../../assets/videos/Fit_verse_x.mp4'), (player) => {
+        player.loop = true;
+        player.play();
+    });
+
+    useEffect(() => {
+        if (isPressed) {
+            Animated.sequence([
+                Animated.timing(scaleAnim, {
+                    toValue: 0.95,
+                    duration: 100,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(scaleAnim, {
+                    toValue: 1,
+                    duration: 100,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+            setIsPressed(false);
+        }
+    }, [isPressed]);
 
     const startWorkout = () => {
-        // Navigate to active workout screen
-        router.push('/active-workout');
+        setIsPressed(true);
+        setTimeout(() => {
+            router.push('/active-workout');
+        }, 200);
     }
 
     return (
-        <SafeAreaView className={`flex-1 ${theme === 'dark' ? 'bg-black' : 'bg-gray-50'}`} edges={['top', 'left', 'right']}>
+        <SafeAreaView className={`flex-1 ${theme === 'dark' ? 'bg-black' : 'bg-white'}`} edges={['top', 'left', 'right']}>
             <StatusBar barStyle={theme === 'dark' ? 'light-content' : 'dark-content'} />
+            <View className='flex-1 relative'>
+                {/* Video Background */}
+                <VideoView
+                    player={player}
+                    contentFit="cover"
+                    nativeControls={false}
+                    style={{ position: 'absolute', top: 0, left: 0, bottom: 0, right: 0 }}
+                />
 
-            {/* Main Start Workout Screen */}
-            <View className='flex-1 px-6 '>
-                {/* Header */}
-                <View className='pt-8 pb-8'>
-                    <Text className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-2`}>
-                        Ready to Train?
-                    </Text>
-                    <Text className={`text-lg ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                        Start your workout session
-                    </Text>
-                </View>
-            </View>
+                {/* Dark Overlay */}
+                <View className={`absolute inset-0 ${theme === 'dark' ? 'bg-black/40' : 'bg-black/5'}`} />
+                
+                {/* Gradient Overlay Top */}
+                <View className='absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/50 to-transparent' />
+                
+                {/* Gradient Overlay Bottom */}
+                <View className='absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/80 via-black/40 to-transparent' />
 
-            {/* Generic Start Workout Card */}
-            <View className={`${theme === 'dark' ? 'bg-gray-900' : 'bg-white'} rounded-3xl p-6 shadow-sm border ${theme === 'dark' ? 'border-gray-800' : 'border-gray-300'} mx-6 mb-3`}>
-                <View className='flex-row items-center justify-between mb-6'>
-                    <View className='flex-row items-center'>
-                        <View className={`w-12 h-12 ${theme === 'dark' ? 'bg-black' : 'bg-blue-100'} rounded-full items-center justify-center mr-3`}>
-                            <Ionicons name='fitness' size={24} color='#3B82F6' />
-                        </View>
-                        <View>
-                            <Text className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                                Start Workout
-                            </Text>
-                            <Text className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>Begin your training session</Text>
-                        </View>
-                    </View>
-                    <View className='bg-green-100 px-3 py-1 rounded-full'>
-                        <Text className='text-green-700 font-medium text-sm'>Ready</Text>
-                    </View>
-                </View>
-
-                {/* Start Button */}
-                <TouchableOpacity
-                    onPress={startWorkout}
-                    className='bg-blue-600 rounded-2xl py-4 items-center active:bg-blue-700'
-                    activeOpacity={0.8}
-                >
-                    <View className='flex-row items-center'>
-                        <Ionicons name='play' size={20} color='white' className='mr-2' />
-                        <Text className='text-white font-semibold text-lg'>
-                            Start Workout
+                {/* Main Content */}
+                <View className='flex-1 px-6 justify-between relative z-10'>
+                    {/* Header */}
+                    <View className='pt-8'>
+                        <Text className='text-5xl font-black text-white mb-1' style={{ letterSpacing: -1.5 }}>
+                            Workout
+                        </Text>
+                        <Text className='text-base text-white/70 font-black' style={{ letterSpacing: -0.3 }}>
+                            Begin your training session
                         </Text>
                     </View>
-                </TouchableOpacity>
+
+                    {/* Start Workout Card - Bottom */}
+                    <View className='pb-12'>
+                        <TouchableOpacity
+                            onPress={startWorkout}
+                            activeOpacity={0.7}
+                        >
+                            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+                                <View className={`${theme === 'dark' ? 'bg-blue-600' : 'bg-blue-600'} rounded-2xl p-6 items-center`}>
+                                    <View className='flex-row items-center justify-center'>
+                                        <Ionicons name='play' size={24} color='white' />
+                                        <Text className='text-white font-black text-lg ml-3' style={{ letterSpacing: -0.5 }}>
+                                            Start Workout
+                                        </Text>
+                                    </View>
+                                </View>
+                            </Animated.View>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </View>
         </SafeAreaView>
     )

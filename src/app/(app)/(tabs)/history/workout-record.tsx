@@ -1,4 +1,4 @@
-import { View, Text, ActivityIndicator, TouchableOpacity, ScrollView, Alert } from 'react-native'
+import { View, Text, ActivityIndicator, TouchableOpacity, ScrollView, Alert, StatusBar } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { defineQuery } from 'groq';
@@ -151,7 +151,7 @@ export default function WorkoutRecord() {
             <SafeAreaView className={`flex-1 ${theme === 'dark' ? 'bg-black' : 'bg-gray-50'}`} edges={['top', 'left', 'right']}>
                 <View className='flex-1 items-center justify-center'>
                     <ActivityIndicator size="large" color="#3B82F6" />
-                    <Text className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mt-4`}>Loading workout...</Text>
+                    <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} mt-4`}>Loading workout...</Text>
                 </View>
             </SafeAreaView>
         )
@@ -165,7 +165,7 @@ export default function WorkoutRecord() {
                     <Text className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-4`}>
                         Workout Not Found
                     </Text>
-                    <Text className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mt-2 text-center`}>
+                    <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} mt-2 text-center text-base font-black`} style={{ letterSpacing: -0.3 }}>
                         This workout record could not be found.
                     </Text>
                     <TouchableOpacity
@@ -184,11 +184,22 @@ export default function WorkoutRecord() {
     return (
         <View className={`flex-1 ${theme === 'dark' ? 'bg-black' : 'bg-gray-50'}`}>
             <ScrollView className='flex-1'>
+                <StatusBar barStyle={theme === 'dark' ? 'light-content' : 'dark-content'} />
+                {/* Page Header */}
+                <View className={`px-6 pt-6 pb-6 border-b ${theme === 'dark' ? 'border-gray-800 bg-black' : 'border-gray-200 bg-white'}`}>
+                    <Text className={`text-5xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-1`} style={{ letterSpacing: -1.5 }}>
+                        Summary
+                    </Text>
+                    <Text className={`text-base font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                        {formatDate(workout?.date)}
+                    </Text>
+                </View>
+
                 {/* Workout Summary */}
-                <View className={`${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-300'} p-6 border-b`}>
+                <View className={`${theme === 'dark' ? 'bg-charcoal border-gray-800' : 'bg-white border-gray-300'} p-6 border-b`}>
                     <View className='flex-row items-center justify-between mb-4'>
-                        <Text className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                            Workout Summary
+                        <Text className={`text-2xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`} style={{ letterSpacing: -1 }}>
+                            Workout Details
                         </Text>
                         <TouchableOpacity
                             onPress={handleDeleteWorkout}
@@ -247,14 +258,14 @@ export default function WorkoutRecord() {
                     {workout.exercises?.map((exerciseData, index) => (
                         <View
                             key={exerciseData._key}
-                            className={`${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-300'} rounded-2xl p-6 shadow-sm border`}>
+                            className={`${theme === 'dark' ? 'bg-charcoal border-gray-800' : 'bg-white border-gray-300'} rounded-2xl p-6 shadow-sm border`}>
                             {/* Exercise Header */}
                             <View className='flex-row items-center justify-between mb-4'>
                                 <View className='flex-1'>
                                     <Text className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                                         {exerciseData.exercise?.name || "Unknown Exercise"}
                                     </Text>
-                                    <Text className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-sm mt-1`}>
+                                    <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} text-sm mt-1`}>
                                         {exerciseData.sets?.length || 0} sets completed
                                     </Text>
                                 </View>
@@ -267,13 +278,13 @@ export default function WorkoutRecord() {
 
                             {/* Sets List */}
                             <View className='space-y-2'>
-                                <Text className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-700'} mb-2`}>
+                                <Text className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
                                     Sets:
                                 </Text>
                                 {exerciseData.sets?.map((set, setIndex) => (
                                     <View
                                         key={set._key}
-                                        className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'} rounded-lg p-3 flex-row items-center justify-between`}
+                                        className={`${theme === 'dark' ? 'bg-charcoal/50' : 'bg-gray-50'} rounded-lg p-3 flex-row items-center justify-between`}
                                     >
                                         <View className='flex-row items-center'>
                                             <View className={`${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'} rounded-full w-6 h-6 items-center justify-center mr-3`}>
@@ -303,7 +314,7 @@ export default function WorkoutRecord() {
                             {exerciseData.sets && exerciseData.sets.length > 0 && (
                                 <View className={`mt-4 pt-4 border-t ${theme === 'dark' ? 'border-gray-800' : 'border-gray-100'}`}>
                                     <View className='flex-row items-center justify-between'>
-                                        <Text className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                                        <Text className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
                                             Exercise Volume:
                                         </Text>
                                         <Text className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-900'}`}>

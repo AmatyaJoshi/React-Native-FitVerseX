@@ -39,9 +39,9 @@ export default function ExerciseCard({
     return (
         <TouchableOpacity
             onPress={onPress}
-            className={`${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-300'} rounded-2xl mb-4 shadow-sm border`}>
+            className={`${theme === 'dark' ? 'bg-charcoal border-gray-800' : 'bg-white border-gray-300'} rounded-2xl mb-4 shadow-sm border`}>
             <View className="flex-row p-6">
-                <View className={`w-20 h-20 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} rounded-xl mr-4 overflow-hidden`}>
+                <View className={`w-20 h-20 ${theme === 'dark' ? 'bg-charcoal/50' : 'bg-gray-100'} rounded-xl mr-4 overflow-hidden`}>
                     {item.image ? (
                         <Image
                             source={{ uri: urlFor(item.image?.asset?._ref).url()}}
@@ -58,10 +58,10 @@ export default function ExerciseCard({
 
                 <View className='flex-1 justify-between'>
                     <View>
-                        <Text className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-1`}>
+                        <Text className={`text-lg font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-1`} style={{ letterSpacing: -0.4 }}>
                             {item.name}
                         </Text>
-                        <Text className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mb-2`} numberOfLines={2}>
+                        <Text className={`text-base font-black ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} mb-2`} numberOfLines={2} style={{ letterSpacing: -0.3 }}>
                             {item.description || "No description available."}
                         </Text>
                     </View>

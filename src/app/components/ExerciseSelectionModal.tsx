@@ -8,6 +8,7 @@ import ExerciseCard from './ExerciseCard';
 import { Exercise } from '@/lib/sanity/types';
 import { client } from '@/lib/sanity/client';
 import { exercisesQuery } from '../(app)/(tabs)/exercises';
+import { useTheme } from '@/lib/contexts/ThemeContext';
 
 interface ExerciseSelectionModalProps {
     visible: boolean;
@@ -20,6 +21,7 @@ export default function ExerciseSelectionModal({
 }: ExerciseSelectionModalProps) {
     const router = useRouter();
     const { addExerciseToWorkout } = useWorkoutStore();
+    const { theme } = useTheme();
     const [exercises, setExercises] = useState<any[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredExercises, setFilteredExercises] = useState<any[]>([]);
@@ -65,42 +67,45 @@ export default function ExerciseSelectionModal({
             visible={visible}
             animationType="slide"
             onRequestClose={onClose}
-            presentationStyle='pageSheet'
+            presentationStyle="fullScreen"
         >
-            <SafeAreaView className='flex-1 bg-white'>
-                <StatusBar barStyle='light-content' />
-
+            <SafeAreaView 
+                className={`flex-1 ${theme === 'dark' ? 'bg-black' : 'bg-white'}`}
+                edges={['top', 'left', 'right']}
+            >
+                <StatusBar barStyle={theme === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={theme === 'dark' ? '#000000' : '#ffffff'} />
+                
                 {/* Header */}
-                <View className='bg-white px-4 pt-4 pb-6 shadow-sm border-b border-gray-100'>
+                <View className={`${theme === 'dark' ? 'bg-black border-gray-800' : 'bg-white border-gray-100'} px-4 pt-4 pb-6 shadow-sm border-b`}>
                     <View className='flex-row items-center justify-between mb-4'>
-                        <Text className='text-2xl font-bold text-gray-800'>
+                        <Text className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`} style={{ letterSpacing: -1.2 }}>
                             Add Exercise
                         </Text>
                         <TouchableOpacity
                             onPress={onClose}
                             className='w-8 h-8 items-center justify-center'
                         >
-                            <Ionicons name='close' size={24} color='#6B7280' />
+                            <Ionicons name='close' size={24} color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} />
                         </TouchableOpacity>
                     </View>
 
-                    <Text className='text-gray-600 mb-4'>
+                    <Text className={`text-base ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} mb-4 font-black`} style={{ letterSpacing: -0.3 }}>
                         Tap any exercise to add it to your workout
                     </Text>
 
                     {/* Search Bar */}
-                    <View className='flex-row items-center bg-gray-100 rounded-xl px-4 py-3'>
-                        <Ionicons name='search' size={20} color='#6B7280' />
+                    <View className={`flex-row items-center ${theme === 'dark' ? 'bg-charcoal/50' : 'bg-gray-100'} rounded-xl px-4 py-3`}>
+                        <Ionicons name='search' size={20} color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} />
                         <TextInput
-                            className="flex-1 ml-3 text-gray-800"
+                            className={`flex-1 ml-3 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-800'}`}
                             placeholder='Search exercises...'
-                            placeholderTextColor="#9CA3AF"
+                            placeholderTextColor={theme === 'dark' ? '#6B7280' : '#9CA3AF'}
                             value={searchQuery}
                             onChangeText={setSearchQuery}
                         />
                         {searchQuery.length > 0 && (
                             <TouchableOpacity onPress={() => setSearchQuery('')}>
-                                <Ionicons name='close-circle' size={20} color='#6B7280' />
+                                <Ionicons name='close-circle' size={20} color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} />
                             </TouchableOpacity>
                         )}
                     </View>
@@ -133,11 +138,11 @@ export default function ExerciseSelectionModal({
                     }
                     ListEmptyComponent={
                         <View className='flex-1 items-center justify-center py-20'>
-                            <Ionicons name='fitness-outline' size={64} color="#D1D5DB" />
-                            <Text className='text-lg font-semibold text-gray-400 mt-4'>
+                            <Ionicons name='fitness-outline' size={64} color={theme === 'dark' ? '#4B5563' : '#D1D5DB'} />
+                            <Text className={`text-base font-black ${theme === 'dark' ? 'text-gray-400' : 'text-gray-300'} mt-4`} style={{ letterSpacing: -0.3 }}>
                                 {searchQuery ? 'No exercises found' : 'Loading exercises...'}
                             </Text>
-                            <Text className='text-sm text-gray-400 mt-2'>
+                            <Text className={`text-base font-black ${theme === 'dark' ? 'text-gray-400' : 'text-gray-300'} mt-2`} style={{ letterSpacing: -0.3 }}>
                                 {searchQuery
                                     ? "Try adjusting your search"
                                     : "Please wait a moment"

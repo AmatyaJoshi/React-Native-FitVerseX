@@ -7,6 +7,7 @@ import { Exercise } from '@/lib/sanity/types'
 import { client, urlFor } from '@/lib/sanity/client'
 import { defineQuery } from 'groq'
 import Markdown from 'react-native-markdown-display'
+import { useTheme } from '@/lib/contexts/ThemeContext'
 
 export const singleExerciseQuery = defineQuery(`*[_type == "exercise" && _id == $id][0]`);
 
@@ -30,6 +31,7 @@ const getDifficultyText = (difficulty: string) => {
 
 export default function ExerciseDetail() {
     const router = useRouter();
+    const { theme } = useTheme();
     const [exercise, setExercise] = useState<Exercise>(null);
     const [loading, setLoading] = useState(true);
     const [aiGuidance, setAiGuidance] = useState<string>('');
@@ -99,10 +101,10 @@ Keep it concise but informative.`;
 
     if (loading) {
         return (
-            <SafeAreaView className='flex-1 bg-white'>
+            <SafeAreaView className={`flex-1 ${theme === 'dark' ? 'bg-black' : 'bg-white'}`}>
                 <View className='flex-1 items-center justify-center'>
-                    <ActivityIndicator size="large" color="#0000ff" />
-                    <Text className='text-gray-500'>Loading exercise...</Text>
+                    <ActivityIndicator size="large" color={theme === 'dark' ? '#3B82F6' : '#0000ff'} />
+                    <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-500'} text-base font-black`} style={{ letterSpacing: -0.3 }}>Loading exercise...</Text>
                 </View>
             </SafeAreaView>
         );
@@ -110,9 +112,9 @@ Keep it concise but informative.`;
 
     if (!exercise) {
         return (
-            <SafeAreaView className='flex-1 bg-white'>
+            <SafeAreaView className={`flex-1 ${theme === 'dark' ? 'bg-black' : 'bg-white'}`}>
                 <View className='flex-1 items-center justify-center'>
-                    <Text className='text-gray-500'>Exercise not found: {id}</Text>
+                    <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-500'} text-base font-black`} style={{ letterSpacing: -0.3 }}>Exercise not found: {id}</Text>
                     <TouchableOpacity
                         onPress={() => router.back()}
                         className='mt-4 bg-blue-500 px-6 py-3 rounded-lg'
@@ -125,8 +127,8 @@ Keep it concise but informative.`;
     }
 
     return (
-        <SafeAreaView className='flex-1 bg-white'>
-            <StatusBar barStyle='light-content' backgroundColor='#000' />
+        <SafeAreaView className={`flex-1 ${theme === 'dark' ? 'bg-black' : 'bg-white'}`}>
+            <StatusBar barStyle={theme === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={theme === 'dark' ? '#000' : '#fff'} />
 
             {/* Header with close button */}
             <View className='absolute top-12 left-0 right-0 z-10 px-4'>
@@ -144,7 +146,7 @@ Keep it concise but informative.`;
                 showsVerticalScrollIndicator={false}
             >
                 {/* Hero Image */}
-                <View className='h-80 bg-white relative'>
+                <View className={`h-80 ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'} relative`}>
                     {exercise?.image ? (
                         <Image
                             source={{ uri: urlFor(exercise.image?.asset?._ref).url() }}
@@ -165,29 +167,38 @@ Keep it concise but informative.`;
 
                 {/* Content */}
                 <View className='px-6 py-6'>
+                    {/* iOS-Style Header */}
+                    <View className='mb-6'>
+                        <Text className={`text-5xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-1`} style={{ letterSpacing: -1.5 }}>
+                            {exercise?.name}
+                        </Text>
+                        <Text className={`text-base font-black ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} style={{ letterSpacing: -0.3 }}>
+                            {getDifficultyText(exercise?.difficulty)} Exercise
+                        </Text>
+                    </View>
+
+                    {/* Difficulty Badge */}
+                    <View className='mb-6'>
+                        <View
+                            className={`self-start px-4 py-2 rounded-full
+                            ${getDifficultyColor(exercise?.difficulty)}`}
+                        >
+                            <Text className='text-sm font-semibold text-white'>
+                                {getDifficultyText(exercise.difficulty)}
+                            </Text>
+                        </View>
+                    </View>
+
                     {/* Title and difficulty */}
                     <View className='flex-row items-start justify-between mb-4'>
-                        <View className='flex-1 mr-4'>
-                            <Text className='text-3xl font-bold text-gray-800 mb-2'>
-                                {exercise?.name}
-                            </Text>
-                            <View
-                                className={`self-start px-4 py-2 rounded-full
-                            ${getDifficultyColor(exercise?.difficulty)}`}
-                            >
-                                <Text className='text-sm font-semibold text-white'>
-                                    {getDifficultyText(exercise.difficulty)}
-                                </Text>
-                            </View>
-                        </View>
                     </View>
 
                     {/* Description */}
                     <View className='mb-6'>
-                        <Text className='text-xl font-semibold text-gray-800 mb-3'>
+                        <Text className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-800'} mb-3`}>
                             Description
                         </Text>
-                        <Text className='text-gray-600 text-base leading-6'>
+                        <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} text-lg leading-7`}>
                             {exercise.description || 'No description available for this exercise.'}
                         </Text>
                     </View>
@@ -195,7 +206,7 @@ Keep it concise but informative.`;
                     {/* Video Section */}
                     {exercise?.videoUrl && (
                         <View className='mb-6'>
-                            <Text className='text-xl font-semibold text-gray-800 mb-3'>
+                            <Text className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-800'} mb-3`}>
                                 Video Tutorial
                             </Text>
                             <TouchableOpacity
@@ -223,20 +234,20 @@ Keep it concise but informative.`;
                         <View className='mb-6'>
                             <View className='flex-row items-center mb-3'>
                                 <Ionicons name='fitness' size={24} color='#3B82F6' />
-                                <Text className='text-xl font-semibold text-gray-800 ml-2'>
+                                <Text className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-800'} ml-2`}>
                                     AI Coach says...
                                 </Text>
                             </View>
 
                             {aiLoading ? (
-                                <View className='bg-gray-50 rounded-xl p-4 items-center'>
+                                <View className={`${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} rounded-xl p-4 items-center`}>
                                     <ActivityIndicator size="small" color="#3B82F6" />
-                                    <Text className='text-gray-600 mt-2'>
+                                    <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} mt-2`}>
                                         Generating personalized guidance...
                                     </Text>
                                 </View>
                             ) : (
-                                <View className='bg-blue-50 rounded-xl p-4 border-l-4 border-blue-500'>
+                                <View className={`${theme === 'dark' ? 'bg-gray-900 border-blue-600' : 'bg-blue-50 border-blue-500'} rounded-xl p-4 border-l-4`}>
                                     <Markdown
                                         style={
                                             {
@@ -246,16 +257,19 @@ Keep it concise but informative.`;
                                                 heading2: {
                                                     fontSize: 18,
                                                     fontWeight: "bold",
-                                                    color: "#1f2937",
+                                                    color: theme === 'dark' ? '#E5E7EB' : '#1f2937',
                                                     marginTop: 12,
                                                     marginBottom: 6,
                                                 },
                                                 heading3: {
                                                     fontSize: 16,
                                                     fontWeight: "600",
-                                                    color: "#374151",
+                                                    color: theme === 'dark' ? '#D1D5DB' : '#374151',
                                                     marginTop: 8,
                                                     marginBottom: 4,
+                                                },
+                                                text: {
+                                                    color: theme === 'dark' ? '#D1D5DB' : '#374151',
                                                 }
                                             }
                                         }
@@ -296,10 +310,10 @@ Keep it concise but informative.`;
                             )}
                         </TouchableOpacity>
                         <TouchableOpacity
-                            className='bg-gray-200 rounded-xl py-4 items-center'
+                            className={`rounded-xl py-4 items-center ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'}`}
                             onPress={() => router.back()}
                         >
-                            <Text className='text-gray-800 font-bold text-lg'>Close</Text>
+                            <Text className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} font-bold text-lg`}>Close</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

@@ -1,13 +1,16 @@
 import { useSignIn } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'
-import { Alert, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Alert, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import GoogleSignIn from '../components/GoogleSignIn'
+import AppleSignIn from '../components/AppleSignIn'
+import { useTheme } from '@/lib/contexts/ThemeContext'
 
 export default function Page() {
     const { signIn, setActive, isLoaded } = useSignIn()
+    const { theme, setThemeMode } = useTheme()
     const [isLoading, setIsLoading] = React.useState(false)
     const router = useRouter()
 
@@ -33,7 +36,7 @@ export default function Page() {
             // and redirect the user
             if (signInAttempt.status === 'complete') {
                 await setActive({ session: signInAttempt.createdSessionId })
-                router.replace('/')
+                router.replace('/(tabs)')
             } else {
                 // If the status isn't complete, check why. User might need to
                 // complete further steps.
@@ -49,51 +52,61 @@ export default function Page() {
     }
 
     return (
-        <SafeAreaView className="flex flex-1">
+        <SafeAreaView className={`flex flex-1 ${theme === 'dark' ? 'bg-black' : 'bg-white'}`}>
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 className='flex-1'
             >
-                <View className='flex-1 px-6'>
+                <View className={`flex-1 px-6 ${theme === 'dark' ? 'bg-black' : 'bg-white'}`}>
+                    {/* Theme Toggle Button - Absolute Positioned */}
+                    <View className="absolute top-4 right-6 z-10">
+                        <TouchableOpacity 
+                            onPress={() => setThemeMode(theme === 'dark' ? 'light' : 'dark')}
+                            activeOpacity={0.7}
+                            className={`w-10 h-10 items-center justify-center rounded-full ${theme === 'dark' ? 'bg-charcoal' : 'bg-gray-100'}`}
+                        >
+                            <Ionicons 
+                                name={theme === 'dark' ? 'moon' : 'sunny'} 
+                                size={20} 
+                                color={theme === 'dark' ? 'white' : 'black'} 
+                            />
+                        </TouchableOpacity>
+                    </View>
                     {/* Header Section */}
                     <View className='flex-1 justify-center'>
                         {/* Logo/Branding */}
                         <View className='items-center mb-8'>
-                            <View className='w-20 h-20 bg-gradient-to-br from-blue-600
-                        to-purple-600 rounded-2xl items-center justify-center mb-4 shadow-lg
-                        '>
-                                <Ionicons name='fitness' size={40} color='white' />
-                            </View>
-                            <Text className='text-3xl font-bold text-gray-900 mb-2'>
-                                FitVerseX
-                            </Text>
-                            <Text className='text-lg text-gray-600 text-center'>
+                            <Image
+                                source={theme === 'dark' ? require("../../../images/fit_verse_x_logo_dark.png") : require("../../../images/fit_verse_x_logo.png")}
+                                className="w-48 h-20"
+                                resizeMode="contain"
+                            />
+                            <Text className={`text-base font-black text-center mt-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} style={{ letterSpacing: -0.3 }}>
                                 The extended universe of fitness{"\n"} to reach your goals
                             </Text>
                         </View>
 
 
                         {/* Sign-In Form */}
-                        <View className='bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6'>
-                            <Text className='text-2xl font-bold text-gray-900 mb-6 text-center'>
+                        <View className={`rounded-2xl p-6 shadow-sm border ${theme === 'dark' ? 'bg-charcoal border-gray-800' : 'bg-white border-gray-300'} mb-6`}>
+                            <Text className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-6 text-center`} style={{ letterSpacing: -1 }}>
                                 Welcome Back
                             </Text>
 
                             {/* Email Input */}
                             <View className='mb-4'>
-                                <Text className='text-sm font-medium text-gray-700 mb-2'>
+                                <Text className={`text-sm font-black mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} style={{ letterSpacing: -0.2 }}>
                                     Email
                                 </Text>
-                                <View className='flex-row items-center bg-gray-50 rounded-xl px-4 py-4
-                                    border border-gray-200'>
-                                    <Ionicons name='mail-outline' size={20} color='#6B7280' />
+                                <View className={`flex-row items-center rounded-xl px-4 py-4 border ${theme === 'dark' ? 'bg-charcoal/50 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
+                                    <Ionicons name='mail-outline' size={20} color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} />
                                     <TextInput
                                         autoCapitalize='none'
                                         value={emailAddress}
                                         placeholder='Enter your email'
-                                        placeholderTextColor='#9CA3AF'
+                                        placeholderTextColor={theme === 'dark' ? '#6B7280' : '#9CA3AF'}
                                         onChangeText={setEmailAddress}
-                                        className='flex-1 ml-3 text-gray-900'
+                                        className={`flex-1 ml-3 font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
                                         editable={!isLoading}
                                     />
                                 </View>
@@ -101,20 +114,19 @@ export default function Page() {
 
                             {/* Password Input */}
                             <View className='mb-4'>
-                                <Text className='text-sm font-medium text-gray-700 mb-2'>
+                                <Text className={`text-sm font-black mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`} style={{ letterSpacing: -0.2 }}>
                                     Password
                                 </Text>
-                                <View className='flex-row items-center bg-gray-50 rounded-xl px-4 py-4
-                                    border border-gray-200'>
-                                    <Ionicons name='lock-closed-outline' size={20} color='#6B7280' />
+                                <View className={`flex-row items-center rounded-xl px-4 py-4 border ${theme === 'dark' ? 'bg-charcoal/50 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
+                                    <Ionicons name='lock-closed-outline' size={20} color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} />
                                     <TextInput
                                         autoCapitalize='none'
                                         value={password}
                                         placeholder='Enter your password'
-                                        placeholderTextColor='#9CA3AF'
+                                        placeholderTextColor={theme === 'dark' ? '#6B7280' : '#9CA3AF'}
                                         secureTextEntry={true}
                                         onChangeText={setPassword}
-                                        className='flex-1 ml-3 text-gray-900'
+                                        className={`flex-1 ml-3 font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
                                         editable={!isLoading}
                                     />
                                 </View>
@@ -143,20 +155,23 @@ export default function Page() {
 
                         {/* Divider */}
                         <View className='flex-row items-center my-4'>
-                            <View className='flex-1 h-px bg-gray-200' />
-                            <Text className='px-4 text-gray-500 text-sm'>or</Text>
-                            <View className='flex-1 h-px bg-gray-200' />
+                            <View className={`flex-1 h-px ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'}`} />
+                            <Text className={`px-4 text-sm font-black ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`} style={{ letterSpacing: -0.2 }}>or</Text>
+                            <View className={`flex-1 h-px ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'}`} />
                         </View>
 
-                        {/* Google Sign In Button */}
-                        <GoogleSignIn />
+                        {/* Apple and Google Sign In Buttons */}
+                        <View className='flex-row gap-3 mb-4'>
+                            <AppleSignIn />
+                            <GoogleSignIn />
+                        </View>
 
                         {/* Sign Up Link */}
                         <View className='flex-row justify-center items-center mt-4'>
-                            <Text className='text-gray-600'>Don't have an account? </Text>
+                            <Text className={`font-black ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} style={{ letterSpacing: -0.2 }}>Don't have an account? </Text>
                             <Link href="/sign-up" asChild>
                                 <TouchableOpacity>
-                                    <Text className='text-blue-600 font-semibold'>Sign Up</Text>
+                                    <Text className='text-blue-600 font-black' style={{ letterSpacing: -0.2 }}>Sign Up</Text>
                                 </TouchableOpacity>
                             </Link>
                         </View>
@@ -164,7 +179,7 @@ export default function Page() {
 
                     {/* Footer Section */}
                     <View className='pb-6'>
-                        <Text className='text-center text-gray-500 text-sm'>
+                        <Text className={`text-center text-sm font-black ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`} style={{ letterSpacing: -0.2 }}>
                             Start your fitness journey today
                         </Text>
                     </View>

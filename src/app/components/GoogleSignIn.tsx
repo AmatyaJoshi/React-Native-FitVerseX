@@ -2,11 +2,11 @@ import React, { useCallback, useEffect } from 'react'
 import * as WebBrowser from 'expo-web-browser'
 import * as AuthSession from 'expo-auth-session'
 import { useSSO } from '@clerk/clerk-expo'
-import { View, Button, Platform } from 'react-native'
+import { View, Platform } from 'react-native'
 import { router } from 'expo-router'
 import { TouchableOpacity } from 'react-native'
-import { Text } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import { useTheme } from '@/lib/contexts/ThemeContext'
 
 // Preloads the browser for Android devices to reduce authentication load time
 // See: https://docs.expo.dev/guides/authentication/#improving-user-experience
@@ -26,6 +26,7 @@ WebBrowser.maybeCompleteAuthSession()
 
 export default function GoogleSignIn() {
     useWarmUpBrowser()
+    const { theme } = useTheme()
 
     // Use the `useSSO()` hook to access the `startSSOFlow()` method
     const { startSSOFlow } = useSSO()
@@ -72,14 +73,11 @@ export default function GoogleSignIn() {
     return (
        <TouchableOpacity
        onPress={onPress}
-       className='bg-white border-2 border-gray-200 rounded-xl py-4 shadow-sm'
+       className='rounded-xl py-4 shadow-sm flex-1 bg-red-600 border border-red-700'
        activeOpacity={0.8}
        >
         <View className='flex-row items-center justify-center'>
-            <Ionicons name='logo-google' size={20} color='#EA4335' />
-            <Text className='text-gray-900 font-semibold text-lg ml-3'>
-                Continue with Google
-            </Text>
+            <Ionicons name='logo-google' size={22} color='white' />
         </View>
        </TouchableOpacity>
     )

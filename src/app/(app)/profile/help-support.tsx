@@ -49,7 +49,7 @@ export default function HelpSupportPage() {
         <StatusBar barStyle={theme === 'dark' ? 'light-content' : 'dark-content'} />
         
         {/* Header */}
-        <View className={`px-6 py-4 flex-row items-center justify-between ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'} border-b`}>
+        <View className={`px-6 py-4 flex-row items-center justify-between ${theme === 'dark' ? 'bg-charcoal border-gray-800' : 'bg-white border-gray-200'} border-b`}>
           <TouchableOpacity onPress={() => router.back()}>
             <Ionicons name="chevron-back" size={28} color={theme === 'dark' ? '#F3F4F6' : '#1F2937'} />
           </TouchableOpacity>
@@ -60,8 +60,8 @@ export default function HelpSupportPage() {
         {/* Content */}
         <View className="px-6 pt-6">
           {/* Contact Methods */}
-          <Text className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-4`}>Get in Touch</Text>
-          <View className={`${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-300'} rounded-2xl shadow-sm border overflow-hidden mb-8`}>
+          <Text className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-4`} style={{ letterSpacing: -1.2 }}>Get in Touch</Text>
+          <View className={`${theme === 'dark' ? 'bg-charcoal border-gray-800' : 'bg-white border-gray-300'} rounded-2xl shadow-sm border overflow-hidden mb-8`}>
             {contactMethods.map((method, index) => (
               <TouchableOpacity
                 key={index}
@@ -77,7 +77,7 @@ export default function HelpSupportPage() {
                   </View>
                   <View className="flex-1">
                     <Text className={`font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{method.label}</Text>
-                    <Text className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mt-1`}>{method.value}</Text>
+                    <Text className={`text-base font-black ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} mt-1`} style={{ letterSpacing: -0.3 }}>{method.value}</Text>
                   </View>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color={theme === 'dark' ? '#6B7280' : '#6B7280'} />
@@ -86,8 +86,8 @@ export default function HelpSupportPage() {
           </View>
 
           {/* FAQs */}
-          <Text className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-4`}>Frequently Asked Questions</Text>
-          <View className={`${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-300'} rounded-2xl shadow-sm border overflow-hidden mb-8`}>
+          <Text className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-4`} style={{ letterSpacing: -1.2 }}>Frequently Asked Questions</Text>
+          <View className={`${theme === 'dark' ? 'bg-charcoal border-gray-800' : 'bg-white border-gray-300'} rounded-2xl shadow-sm border overflow-hidden mb-8`}>
             {faqs.map((faq, index) => (
               <View
                 key={index}
@@ -103,7 +103,7 @@ export default function HelpSupportPage() {
                   />
                   <Text className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} flex-1 ml-2`}>{faq.question}</Text>
                 </View>
-                <Text className={`text-sm ml-6 leading-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                <Text className={`text-base font-black ml-6 leading-6 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} style={{ letterSpacing: -0.3 }}>
                   {faq.answer}
                 </Text>
               </View>
@@ -111,14 +111,14 @@ export default function HelpSupportPage() {
           </View>
 
           {/* App Info */}
-          <Text className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-4`}>App Information</Text>
+          <Text className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-4`} style={{ letterSpacing: -1.2 }}>App Information</Text>
           <View className={`${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-300'} rounded-2xl shadow-sm border p-6 mb-8`}>
             <View className="flex-row items-center justify-between mb-4">
-              <Text className={theme === 'dark' ? 'text-gray-400' : 'text-gray-700'}>App Version</Text>
+              <Text className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>App Version</Text>
               <Text className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>1.0.0</Text>
             </View>
             <View className="flex-row items-center justify-between">
-              <Text className={theme === 'dark' ? 'text-gray-400' : 'text-gray-700'}>Build Number</Text>
+              <Text className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>Build Number</Text>
               <Text className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>001</Text>
             </View>
           </View>
@@ -127,8 +127,8 @@ export default function HelpSupportPage() {
           <View className={`${theme === 'dark' ? 'bg-green-900' : 'bg-green-50'} rounded-2xl p-4 mb-8 flex-row`}>
             <Ionicons name="checkmark-circle-outline" size={20} color={theme === 'dark' ? '#10B981' : '#10B981'} />
             <View className="flex-1 ml-3">
-              <Text className={`text-sm font-medium ${theme === 'dark' ? 'text-green-300' : 'text-green-900'} mb-1`}>We're Here to Help</Text>
-              <Text className={`text-sm ${theme === 'dark' ? 'text-green-400' : 'text-green-800'}`}>
+              <Text className={`text-base font-black ${theme === 'dark' ? 'text-green-300' : 'text-green-900'} mb-1`} style={{ letterSpacing: -0.3 }}>We're Here to Help</Text>
+              <Text className={`text-base font-black ${theme === 'dark' ? 'text-green-400' : 'text-green-800'}`} style={{ letterSpacing: -0.3 }}>
                 Our support team typically responds within 24 hours.
               </Text>
             </View>

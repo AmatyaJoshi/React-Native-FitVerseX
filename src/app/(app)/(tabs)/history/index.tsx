@@ -114,14 +114,14 @@ export default function HistoryPage() {
   if (loading) {
     return (
       <SafeAreaView className={`flex-1 ${theme === 'dark' ? 'bg-black' : 'bg-gray-50'}`} edges={['top', 'left', 'right']}>
-        <View className={`px-6 py-4 ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'} border-b`}>
+        <View className={`px-6 py-4 ${theme === 'dark' ? 'bg-charcoal border-gray-800' : 'bg-white border-gray-200'} border-b`}>
           <Text className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
             Workout History
           </Text>
         </View>
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#3B82F6" />
-          <Text className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mt-4`}>Loading your workouts...</Text>
+          <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} mt-4`}>Loading your workouts...</Text>
         </View>
       </SafeAreaView>
     );
@@ -131,11 +131,11 @@ export default function HistoryPage() {
     <SafeAreaView className={`flex flex-1 ${theme === 'dark' ? 'bg-black' : 'bg-white'}`} edges={['top', 'left', 'right']}>
       <StatusBar barStyle={theme === 'dark' ? 'light-content' : 'dark-content'} />
       {/* Header */}
-      <View className={`px-6 py-4 ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'} border-b`}>
-        <Text className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-          Workout History
+      <View className={`px-6 pt-6 pb-4 border-b ${theme === 'dark' ? 'border-gray-800 bg-black' : 'border-gray-200 bg-white'}`}>
+        <Text className={`text-5xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-1`} style={{ letterSpacing: -1.5 }}>
+          History
         </Text>
-        <Text className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
+        <Text className={`${workouts.some(w => !w.duration) ? 'text-sm' : 'text-base'} font-black ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`} style={{ letterSpacing: -0.3 }}>
           {workouts.length} workout{workouts.length !== 1 ? 's' : ''} completed
         </Text>
       </View>
@@ -145,16 +145,23 @@ export default function HistoryPage() {
         className="flex-1"
         contentContainerStyle={{ padding: 24 }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={onRefresh}
+            colors={["#3B82F6"]}
+            tintColor="#3B82F6"
+            title='Pull to refresh'
+            titleColor={theme === 'dark' ? '#D1D5DB' : '#6B7280'}
+          />
         }
       >
         {workouts.length === 0 ? (
-          <View className={`${theme === 'dark' ? 'bg-gray-900' : 'bg-white'} rounded-2xl p-8 items-center`}>
+          <View className={`${theme === 'dark' ? 'bg-charcoal' : 'bg-white'} rounded-2xl p-8 items-center`}>
             <Ionicons name="barbell-outline" size={64} color={theme === 'dark' ? '#6B7280' : '#9CA3AF'} />
-            <Text className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-4`}>
+            <Text className={`text-2xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-4`} style={{ letterSpacing: -1 }}>
               No workouts yet
             </Text>
-            <Text className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} mt-2 text-center`}>
+          <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} mt-4 text-center text-base font-black`} style={{ letterSpacing: -0.3 }}>
               Your completed workouts will appear here
             </Text>
           </View>
@@ -163,7 +170,7 @@ export default function HistoryPage() {
             {workouts.map((workout) => (
               <TouchableOpacity
                 key={workout._id}
-                className={`${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-300'} rounded-2xl p-6 shadow-sm border`}
+                className={`${theme === 'dark' ? 'bg-charcoal border-gray-800' : 'bg-white border-gray-300'} rounded-2xl p-6 shadow-sm border`}
                 activeOpacity={0.7}
                 onPress={() => {
                   router.push({
@@ -182,7 +189,7 @@ export default function HistoryPage() {
                     </Text>
                     <View className="flex-row items-center mt-1">
                       <Ionicons name="time-outline" size={16} color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} />
-                      <Text className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} ml-2`}>
+                      <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} ml-2`}>
                         {formatWorkoutDuration(workout.duration)}
                       </Text>
                     </View>
@@ -198,12 +205,12 @@ export default function HistoryPage() {
                 {/* Workout Stats */}
                 <View className="flex-row items-center justify-between mb-4">
                   <View className="flex-row items-center">
-                    <View className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg px-3 py-2 mr-3`}>
+                    <View className={`${theme === 'dark' ? 'bg-charcoal/50' : 'bg-gray-100'} rounded-lg px-3 py-2 mr-3`}>
                       <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} font-medium text-sm`}>
                         {workout.exercises?.length || 0} exercises
                       </Text>
                     </View>
-                    <View className={`${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg px-3 py-2`}>
+                    <View className={`${theme === 'dark' ? 'bg-charcoal/50' : 'bg-gray-100'} rounded-lg px-3 py-2`}>
                       <Text className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} font-medium text-sm`}>
                         {getTotalSets(workout)} sets
                       </Text>
@@ -214,7 +221,7 @@ export default function HistoryPage() {
                 {/* Exercise List */}
                 {workout.exercises && workout.exercises.length > 0 && (
                   <View>
-                    <Text className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-700'} mb-2`}>
+                    <Text className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
                       Exercises:
                     </Text>
                     <View className="flex-row flex-wrap">

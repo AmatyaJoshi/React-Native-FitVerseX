@@ -28,7 +28,7 @@ export default function PreferencesPage() {
         <StatusBar barStyle={theme === 'dark' ? 'light-content' : 'dark-content'} />
         
         {/* Header */}
-        <View className={`px-6 py-4 flex-row items-center justify-between ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'} border-b`}>
+        <View className={`px-6 py-4 flex-row items-center justify-between ${theme === 'dark' ? 'bg-charcoal border-gray-800' : 'bg-white border-gray-200'} border-b`}>
           <TouchableOpacity onPress={() => router.back()}>
             <Ionicons name="chevron-back" size={28} color={theme === 'dark' ? '#F3F4F6' : '#1F2937'} />
           </TouchableOpacity>
@@ -40,7 +40,7 @@ export default function PreferencesPage() {
         <View className="px-6 pt-6">
           {/* Theme Selection */}
           <View className="mb-6">
-            <Text className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-4`}>Theme</Text>
+            <Text className={`text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-4`} style={{ letterSpacing: -1.2 }}>Theme</Text>
             <View className="flex-row justify-between gap-3">
               {themes.map((themeOption) => (
                 <TouchableOpacity
@@ -53,7 +53,7 @@ export default function PreferencesPage() {
                   className={`flex-1 rounded-2xl p-4 items-center border-2 ${
                     selectedTheme === themeOption.id
                       ? `border-blue-600 ${theme === 'dark' ? 'bg-black' : 'bg-blue-50'}`
-                      : `${theme === 'dark' ? 'border-gray-700 bg-gray-900' : 'border-gray-200 bg-white'}`
+                      : `${theme === 'dark' ? 'border-gray-700 bg-charcoal' : 'border-gray-200 bg-white'}`
                   }`}
                 >
                   <Ionicons
@@ -62,11 +62,12 @@ export default function PreferencesPage() {
                     color={selectedTheme === themeOption.id ? '#3B82F6' : theme === 'dark' ? '#6B7280' : '#6B7280'}
                   />
                   <Text
-                    className={`text-sm font-medium mt-2 ${
+                    className={`text-base font-black mt-2 ${
                       selectedTheme === themeOption.id
                         ? 'text-blue-600'
-                        : theme === 'dark' ? 'text-gray-400' : 'text-gray-700'
+                        : theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                     }`}
+                    style={{ letterSpacing: -0.3 }}
                   >
                     {themeOption.label}
                   </Text>
@@ -76,8 +77,8 @@ export default function PreferencesPage() {
           </View>
 
           {/* Weight Unit Selection */}
-          <View className={`${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-300'} rounded-2xl shadow-sm border overflow-hidden mb-6`}>
-            <Text className={`px-6 pt-6 pb-4 text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Weight Unit</Text>
+          <View className={`${theme === 'dark' ? 'bg-charcoal border-gray-800' : 'bg-white border-gray-300'} rounded-2xl shadow-sm border overflow-hidden mb-6`}>
+            <Text className={`px-6 pt-6 pb-4 text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`} style={{ letterSpacing: -1.2 }}>Weight Unit</Text>
             
             {units.map((unit, index) => (
               <TouchableOpacity
@@ -93,7 +94,7 @@ export default function PreferencesPage() {
                   className={`w-6 h-6 rounded-full border-2 items-center justify-center ${
                     selectedUnit === unit.id
                       ? 'border-blue-600 bg-blue-600'
-                      : `${theme === 'dark' ? 'border-gray-600 bg-gray-800' : 'border-gray-300 bg-white'}`
+                      : `${theme === 'dark' ? 'border-gray-600 bg-charcoal' : 'border-gray-300 bg-white'}`
                   }`}
                 >
                   {selectedUnit === unit.id && (
@@ -105,8 +106,8 @@ export default function PreferencesPage() {
           </View>
 
           {/* Privacy Settings */}
-          <View className={`${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-300'} rounded-2xl shadow-sm border overflow-hidden mb-6`}>
-            <Text className={`px-6 pt-6 pb-4 text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Privacy</Text>
+          <View className={`${theme === 'dark' ? 'bg-charcoal border-gray-800' : 'bg-white border-gray-300'} rounded-2xl shadow-sm border overflow-hidden mb-6`}>
+            <Text className={`px-6 pt-6 pb-4 text-3xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`} style={{ letterSpacing: -1.2 }}>Privacy</Text>
             
             <TouchableOpacity 
               activeOpacity={0.7}
@@ -127,7 +128,7 @@ export default function PreferencesPage() {
           <View className={`${theme === 'dark' ? 'bg-blue-900' : 'bg-blue-50'} rounded-2xl p-4 mb-8 flex-row`}>
             <Ionicons name="information-circle-outline" size={20} color="#3B82F6" />
             <View className="flex-1 ml-3">
-              <Text className={`text-sm ${theme === 'dark' ? 'text-blue-200' : 'text-blue-900'}`}>
+              <Text className={`text-base font-black ${theme === 'dark' ? 'text-blue-200' : 'text-blue-900'}`} style={{ letterSpacing: -0.3 }}>
                 Your preferences are saved automatically and will be applied throughout the app.
               </Text>
             </View>
